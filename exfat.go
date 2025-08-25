@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 	"time"
 )
 
@@ -125,18 +124,4 @@ func (v *VHD) extractAllRecursive(srcPath, destPath string) error {
 	}
 
 	return nil
-}
-
-// normalizePath 标准化路径，确保使用正斜杠并以斜杠开头
-func normalizePath(p string) string {
-	p = strings.ReplaceAll(p, "\\", "/")
-	if !strings.HasPrefix(p, "/") {
-		p = "/" + p
-	}
-	return p
-}
-
-// setFileModTime 设置文件的修改时间
-func setFileModTime(path string, modTime time.Time) error {
-	return os.Chtimes(path, modTime, modTime)
 }

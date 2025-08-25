@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"go-exfat"
+	"github.com/JoinChang/go-exfat"
 	"os"
 	"strings"
 )
