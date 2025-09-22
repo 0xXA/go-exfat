@@ -503,3 +503,58 @@ func (fs *ExFATFileSystem) ExtractFile(srcPath, destPath string) error {
 
 	return nil
 }
+
+// extractAllRecursive 递归提取目录内容的内部实现
+func (fs *ExFATFileSystem) extractAllRecursive(srcPath, destPath string) error {
+	// 获取当前目录的内容
+	entries, err := fs.ListDir(srcPath)
+	if err != nil {
+		return fmt.Errorf("failed to list directory %s: %v", srcPath, err)
+	}
+
+	// 确保目标目录存在
+	if err := os.MkdirAll(destPath, 0755); err != nil {
+		return fmt.Errorf("failed to create directory %s: %v", destPath, err)
+	}
+
+	for _, entry := range entries {
+		// 构建源路径和目标路径
+		srcFullPath := filepath.Join(srcPath, entry.Name)
+		destFullPath := filepath.Join(destPath, entry.Name)
+
+		// 标准化路径分隔符（在 VHD 中使用正斜杠）
+		srcFullPath = normalizePath(srcFullPath)
+
+		if entry.IsDir {
+			// 创建目录
+			if err := os.MkdirAll(destFullPath, 0755); err != nil {
+				fmt.Printf("Warning: Failed to create directory %s: %v\n", destFullPath, err)
+				continue
+			}
+
+			// 尝试递归处理子目录
+			err := fs.extractAllRecursive(srcFullPath, destFullPath)
+			if err != nil {
+				// 这可能是空目录或无效簇号的目录，这是正常的
+				fmt.Printf("Warning: Directory %s is empty or inaccessible: %v\n", entry.Name, err)
+				// 但目录结构已经创建，所以继续处理其他项目
+			}
+		} else {
+			// 处理文件
+			if err := fs.ExtractFile(srcFullPath, destFullPath); err != nil {
+				fmt.Printf("Warning: Failed to extract file %s: %v\n", srcFullPath, err)
+				// 继续处理其他文件，不中断整个提取过程
+				continue
+			}
+
+			// 设置文件修改时间（如果可用）
+			if !entry.ModTime.IsZero() {
+				if err := setFileModTime(destFullPath, entry.ModTime); err != nil {
+					fmt.Printf("Warning: Failed to set modification time for file %s: %v\n", destFullPath, err)
+				}
+			}
+		}
+	}
+
+	return nil
+}
