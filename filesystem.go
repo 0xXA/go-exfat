@@ -533,7 +533,7 @@ func (fs *ExFATFileSystem) ExtractAllRecursive(srcPath, destPath string) error {
 			}
 
 			// 尝试递归处理子目录
-			err := fs.extractAllRecursive(srcFullPath, destFullPath)
+			err := fs.ExtractAllRecursive(srcFullPath, destFullPath)
 			if err != nil {
 				// 这可能是空目录或无效簇号的目录，这是正常的
 				fmt.Printf("Warning: Directory %s is empty or inaccessible: %v\n", entry.Name, err)
