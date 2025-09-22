@@ -505,7 +505,7 @@ func (fs *ExFATFileSystem) ExtractFile(srcPath, destPath string) error {
 }
 
 // extractAllRecursive 递归提取目录内容的内部实现
-func (fs *ExFATFileSystem) extractAllRecursive(srcPath, destPath string) error {
+func (fs *ExFATFileSystem) ExtractAllRecursive(srcPath, destPath string) error {
 	// 获取当前目录的内容
 	entries, err := fs.ListDir(srcPath)
 	if err != nil {
