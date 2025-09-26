@@ -186,6 +186,9 @@
       same "printed page" as the copyright notice for easier
       identification within third-party archives.
 
+This repository is a fork of https://github.com/JoinChang/go-exfat. The original project did not specify a license.
+All modifications made by me are licensed under the Apache License, Version 2.0.
+
    Copyright 2025 0xXA
 
    Licensed under the Apache License, Version 2.0 (the "License");
